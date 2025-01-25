@@ -4,6 +4,7 @@
       "name": "karin-plugin-basic",
       "type": "npm",
       "description": "karin plugin basic",
+      "home": "https://github.com/karinjs/karin-plugin-basic",
       "license": {
         "name": "MIT",
         "url": "https://github.com/karinjs/karin-plugin-basic/blob/main/LICENSE"
@@ -18,7 +19,8 @@
       "repo": [
         {
           "type": "github",
-          "url": "https://github.com/karinjs/karin-plugin-basic"
+          "url": "https://github.com/karinjs/karin-plugin-basic",
+          "branch": "main"
         }
       ]
     },
@@ -26,6 +28,7 @@
       "name": "karin-plugin-kkk",
       "type": "npm",
       "description": "咕咕咕 ~",
+      "home": "https://github.com/ikenxuan/karin-plugin-kkk",
       "license": {
         "name": "GPL-3.0",
         "url": "https://github.com/ikenxuan/karin-plugin-kkk/blob/main/LICENSE"
@@ -40,7 +43,8 @@
       "repo": [
         {
           "type": "github",
-          "url": "https://github.com/ikenxuan/karin-plugin-kkk"
+          "url": "https://github.com/ikenxuan/karin-plugin-kkk",
+          "branch": "main"
         }
       ]
     }

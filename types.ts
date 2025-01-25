@@ -15,6 +15,8 @@ export interface Base {
   description: string
   /** 插件提交到仓库时间 */
   time: string
+  /** 插件主页 */
+  home: string
   /** 插件许可证 */
   license: {
     /** 许可证名称 */
@@ -35,6 +37,8 @@ export interface Base {
     type: 'github' | 'gitee' | 'gitcode' | 'gitlab' | 'npm'
     /** 仓库地址 */
     url: string
+    /** 默认分支 npm类型为空字符串 */
+    branch: string
   }[]
 }
 

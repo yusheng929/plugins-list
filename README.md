@@ -40,13 +40,14 @@
 | description | string | 插件描述（限制50字符）         | "karin plugin basic"    |
 | time        | string | 发布时间 (YYYY-MM-DD HH:mm:ss) | "2025-01-19 10:00:00"   |
 | license     | object | 开源协议信息                   | 见下方示例              |
+| home        | string | 插件主页                       | https://github.com/sj817 |
 
 #### 许可证信息 (license)
 
 | 字段名 | 类型   | 描述       | 示例                                                              |
 | ------ | ------ | ---------- | ----------------------------------------------------------------- |
 | name   | string | 许可证名称 | "MIT"                                                             |
-| url    | string | 许可证地址 | "https://github.com/karinjs/karin-plugin-basic/blob/main/LICENSE" |
+| url    | string | 许可证地址 | https://github.com/karinjs/karin-plugin-basic/blob/main/LICENSE |
 
 #### 作者信息 (author)
 
@@ -54,8 +55,8 @@
 
 | 字段名 | 类型   | 描述     | 示例                       |
 | ------ | ------ | -------- | -------------------------- |
-| name   | string | 作者名称 | "shijin"                   |
-| home   | string | 作者主页 | "https://github.com/sj817" |
+| name   | string | 作者名称 | shijin                     |
+| home   | string | 作者主页 | https://github.com/sj817 |
 
 #### 仓库信息 (repo)
 
@@ -64,7 +65,34 @@
 | 字段名 | 类型   | 描述                                                             | 示例                                            |
 | ------ | ------ | ---------------------------------------------------------------- | ----------------------------------------------- |
 | type   | string | 仓库类型 ("github" \| "gitee" \| "gitcode" \| "gitlab" \| "npm") | "github"                                        |
-| url    | string | 仓库地址                                                         | "https://github.com/karinjs/karin-plugin-basic" |
+| url    | string | 仓库地址                                                         | https://github.com/karinjs/karin-plugin-basic |
+| branch | string | 默认分支（npm类型为空字符串）                                    | "main"                                          |
+
+#### 主页信息 (home)
+
+| 字段名 | 类型   | 描述     | 示例                       |
+| ------ | ------ | -------- | -------------------------- |
+| home   | string | 主页地址 | https://github.com/sj817 |
+
+### 插件类型说明
+
+1. **NPM 插件** (`type: "npm"`)
+   - 通过 npm 包方式发布的插件
+
+2. **Git 插件** (`type: "git"`)
+   - 通过 git 仓库方式发布的插件
+
+3. **App 插件** (`type: "app"`)
+   - 单应用插件，需要提供文件直链地址
+   - 需要在配置中添加 `files` 字段，包含应用文件的直链地址
+
+## 注意事项
+
+- 请确保将新插件添加到 `plugins` 数组中
+- name 必须是唯一的
+- description 长度限制为 50 字符
+- 对于 App 类型插件，建议提供多个下载源以提高可用性
+- 所有仓库源都必须提供`package.json` 并且包含`name` 和 `version` 字段
 
 ### 示例
 
@@ -91,7 +119,13 @@
       "repo": [
         {
           "type": "github",
-          "url": "https://github.com/karinjs/karin-plugin-basic"
+          "url": "https://github.com/karinjs/karin-plugin-basic",
+          "branch": "main"
+        },
+        {
+          "type": "npm",
+          "url": "https://www.npmjs.com/package/karin-plugin-basic",
+          "branch": ""
         }
       ]
     },
@@ -113,11 +147,13 @@
       "repo": [
         {
           "type": "github",
-          "url": "https://github.com/username/karin-plugin-git-example"
+          "url": "https://github.com/username/karin-plugin-git-example",
+          "branch": "main"
         },
         {
           "type": "gitee",
-          "url": "https://gitee.com/username/karin-plugin-git-example"
+          "url": "https://gitee.com/username/karin-plugin-git-example",
+          "branch": "master"
         }
       ]
     },
@@ -139,7 +175,8 @@
       "repo": [
         {
           "type": "github",
-          "url": "https://github.com/username/karin-plugin-app-example"
+          "url": "https://github.com/username/karin-plugin-app-example",
+          "branch": "main"
         }
       ],
       "files": [
@@ -150,25 +187,6 @@
   ]
 }
 ```
-
-### 插件类型说明
-
-1. **NPM 插件** (`type: "npm"`)
-   - 通过 npm 包方式发布的插件
-
-2. **Git 插件** (`type: "git"`)
-   - 通过 git 仓库方式发布的插件
-
-3. **App 插件** (`type: "app"`)
-   - 单应用插件，需要提供文件直链地址
-   - 需要在配置中添加 `files` 字段，包含应用文件的直链地址
-
-## 注意事项
-
-- 请确保将新插件添加到 `plugins` 数组中
-- name 必须是唯一的
-- description 长度限制为 50 字符
-- 对于 App 类型插件，建议提供多个下载源以提高可用性
 
 ## 许可证
 

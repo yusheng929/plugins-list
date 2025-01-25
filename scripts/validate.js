@@ -35,7 +35,7 @@ const isValidUrl = (url) => {
  * @param {object} plugin 
  */
 const validateBaseFields = (plugin) => {
-  const requiredFields = ['name', 'type', 'description', 'license', 'time', 'author', 'repo']
+  const requiredFields = ['name', 'type', 'description', 'license', 'time', 'author', 'repo', 'home']
 
   for (const field of requiredFields) {
     if (!plugin[field]) {
@@ -68,6 +68,10 @@ const validateBaseFields = (plugin) => {
   if (!type.includes(plugin.type)) {
     throw new Error(`插件 ${plugin.name} 的类型 ${plugin.type} 无效`)
   }
+
+  if (!isValidUrl(plugin.home)) {
+    throw new Error(`插件 ${plugin.name} 的主页 URL 无效`)
+  }
 }
 
 /**
@@ -82,6 +86,71 @@ const validateAuthor = (plugin) => {
     if (!author.home || !isValidUrl(author.home)) {
       throw new Error(`插件 ${plugin.name} 的作者主页 URL 无效`)
     }
+  }
+}
+
+/**
+ * 获取仓库原始文件的URL
+ * @param {object} repo - 仓库信息
+ * @param {string} filePath - 文件路径
+ * @returns {string} 原始文件URL
+ */
+const getRawFileUrl = (repo) => {
+  const { type, url, branch } = repo
+  const filePath = 'package.json'
+  
+  switch (type) {
+    case 'github':
+      return url.replace('github.com', 'raw.githubusercontent.com') + `/${branch}/${filePath}`
+    case 'gitee':
+      return `${url}/raw/${branch}/${filePath}`
+    case 'gitlab':
+      return `${url}/-/raw/${branch}/${filePath}`
+    case 'gitcode':
+      return `${url}/-/raw/${branch}/${filePath}`
+    case 'npm':
+      return `https://registry.npmjs.org/${url}/latest`
+    default:
+      throw new Error(`不支持的仓库类型: ${type}`)
+  }
+}
+
+/**
+ * 验证仓库的 package.json
+ * @param {object} plugin - 插件信息
+ * @param {object} repo - 仓库信息
+ */
+const validatePackageJson = async (plugin, repo) => {
+  try {
+    if (repo.type === 'npm') {
+      if (repo.branch !== '') {
+        throw new Error(`插件 ${plugin.name} 的 npm 仓库不应该设置 branch 字段`)
+      }
+      return // npm 类型不需要验证 package.json
+    }
+    
+    if (!repo.branch) {
+      throw new Error(`插件 ${plugin.name} 的 ${repo.type} 仓库缺少 branch 字段`)
+    }
+
+    const rawUrl = getRawFileUrl(repo)
+    const response = await fetch(rawUrl)
+    
+    if (!response.ok) {
+      throw new Error(`无法访问 package.json: ${response.statusText}`)
+    }
+    
+    const packageJson = await response.json()
+    
+    if (!packageJson.name) {
+      throw new Error('package.json 缺少 name 字段')
+    }
+    
+    if (!packageJson.version) {
+      throw new Error('package.json 缺少 version 字段')
+    }
+  } catch (error) {
+    throw new Error(`插件 ${plugin.name} 的仓库 ${repo.url} 验证失败: ${error.message}`)
   }
 }
 
@@ -143,6 +212,11 @@ const main = async () => {
       validateBaseFields(plugin)
       validateAuthor(plugin)
       validateRepo(plugin)
+
+      // 验证每个仓库的 package.json
+      for (const repo of plugin.repo) {
+        await validatePackageJson(plugin, repo)
+      }
 
       if (plugin.type === 'app') {
         validateAppPlugin(plugin)
