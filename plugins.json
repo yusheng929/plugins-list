@@ -1,7 +1,7 @@
 {
   "plugins": [
     {
-      "name": "karin-plugin-basic",
+      "name": "@karinjs/plugin-basic",
       "type": "npm",
       "description": "karin plugin basic",
       "home": "https://github.com/karinjs/karin-plugin-basic",

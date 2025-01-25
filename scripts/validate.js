@@ -98,7 +98,7 @@ const validateAuthor = (plugin) => {
 const getRawFileUrl = (repo) => {
   const { type, url, branch } = repo
   const filePath = 'package.json'
-  
+
   switch (type) {
     case 'github':
       return url.replace('github.com', 'raw.githubusercontent.com') + `/${branch}/${filePath}`
@@ -116,6 +116,25 @@ const getRawFileUrl = (repo) => {
 }
 
 /**
+ * 验证 npm 包是否存在
+ * @param {object} repo - 仓库信息
+ */
+const validateNpmPackage = async (name) => {
+  try {
+    const response = await fetch(`https://registry.npmjs.com/${name}/latest`)
+    if (!response.ok) {
+      throw new Error(`npm 包不存在或无法访问: ${response.statusText}`)
+    }
+    const packageData = await response.json()
+    if (!packageData.name || !packageData.version) {
+      throw new Error('npm 包缺少 name 或 version 字段')
+    }
+  } catch (error) {
+    throw new Error(`npm 包 ${name} 验证失败: ${error.message}`)
+  }
+}
+
+/**
  * 验证仓库的 package.json
  * @param {object} plugin - 插件信息
  * @param {object} repo - 仓库信息
@@ -128,24 +147,24 @@ const validatePackageJson = async (plugin, repo) => {
       }
       return // npm 类型不需要验证 package.json
     }
-    
+
     if (!repo.branch) {
       throw new Error(`插件 ${plugin.name} 的 ${repo.type} 仓库缺少 branch 字段`)
     }
 
     const rawUrl = getRawFileUrl(repo)
     const response = await fetch(rawUrl)
-    
+
     if (!response.ok) {
       throw new Error(`无法访问 package.json: ${response.statusText}`)
     }
-    
+
     const packageJson = await response.json()
-    
+
     if (!packageJson.name) {
       throw new Error('package.json 缺少 name 字段')
     }
-    
+
     if (!packageJson.version) {
       throw new Error('package.json 缺少 version 字段')
     }
@@ -208,24 +227,25 @@ const main = async () => {
 
     validateUniquePackages(plugins)
 
-    for (const plugin of plugins) {
+    // 并发验证所有插件
+    await Promise.all(plugins.map(async (plugin) => {
       validateBaseFields(plugin)
       validateAuthor(plugin)
       validateRepo(plugin)
 
-      // 验证每个仓库的 package.json
-      for (const repo of plugin.repo) {
-        await validatePackageJson(plugin, repo)
-      }
+      // 并发验证所有仓库
+      await Promise.all(plugin.repo.map(repo => validatePackageJson(plugin, repo)))
 
       if (plugin.type === 'app') {
         validateAppPlugin(plugin)
-      } else if (plugin.type === 'git' || plugin.type === 'npm') {
+      } else if (plugin.type === 'git') {
         // 什么都不做
+      } else if (plugin.type === 'npm') {
+        await validateNpmPackage(plugin.name)
       } else {
         throw new Error(`插件 ${plugin.name} 的类型 ${plugin.type} 无效`)
       }
-    }
+    }))
 
     console.log('✅ 验证通过')
     process.exit(0)
