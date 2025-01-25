@@ -176,20 +176,14 @@
 
 ## 预览
 
-### github
+### npm
 
 ```bash
-https://raw.githubusercontent.com/KarinJS/files/refs/heads/main/plugins.json
+https://registry.npmjs.com/@karinjs/plugins-list/latest
 ```
 
-### gitee
+### npmmirror
 
 ```bash
-https://gitee.com/KarinJS/files/raw/main/plugins.json
-```
-
-### gitcode
-
-```bash
-https://raw.gitcode.com/karinjs/file/raw/main/plugins.json
+https://registry.npmmirror.com/@karinjs/plugins-list/latest
 ```
