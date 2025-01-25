@@ -105,9 +105,9 @@ const getRawFileUrl = (repo) => {
     case 'gitee':
       return `${url}/raw/${branch}/${filePath}`
     case 'gitlab':
-      return `${url}/-/raw/${branch}/${filePath}`
+      return `${url}/raw/${branch}/${filePath}`
     case 'gitcode':
-      return `${url}/-/raw/${branch}/${filePath}`
+      return `${url}/raw/${branch}/${filePath}`
     case 'npm':
       return `https://registry.npmjs.org/${url}/latest`
     default:
