@@ -45,8 +45,13 @@
           "type": "github",
           "url": "https://github.com/ikenxuan/karin-plugin-kkk",
           "branch": "main"
+        },
+        {
+          "type": "npm",
+          "url": "https://www.npmjs.com/package/karin-plugin-kkk",
+          "branch": ""
         }
       ]
     }
   ]
-} 
+}
